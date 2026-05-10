@@ -1,15 +1,16 @@
 package com.seven.entities;
 
-import com.badlogic.gdx.math.Vector2;
+public class Box {
+    private Tile current;
 
-public class Box extends Tile {
-    private Vector2 pos;
-
-    public Vector2 getPos() {
-        return pos;
+    public Box(int currentY, int currentX) {
+        this.current = new Tile(currentY, currentX);
+    }
+    public Tile getCurrent() {
+        return current;
     }
 
-    public void setPos(Vector2 pos) {
-        this.pos = pos;
+    public void setCurrent(Tile current) {
+        this.current = current;
     }
 }
