@@ -4,6 +4,10 @@ import com.badlogic.gdx.utils.Array;
 import com.seven.assets.TileEnum;
 import com.seven.entities.Box;
 import com.seven.entities.Player;
+import com.seven.entities.Tile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.seven.assets.TileEnum.*;
 
@@ -18,8 +22,11 @@ public class LevelConfig {
     public static Player l1Player(){
         return new Player(1,1);
     }
-    public static Array<Box> l1Boxes(){
-        return Array.with(new Box(2,1));
+    public static Map<Tile, Box> l1Boxes(){
+        Box box = new Box(2,1);
+        Map<Tile, Box> boxGrid = new HashMap<>();
+        boxGrid.put(box.getCurrent(), box);
+        return boxGrid;
     }
 
     public static TileEnum[][] l2TileGrid(){
@@ -36,8 +43,11 @@ public class LevelConfig {
         return new Player(2,2);
     }
 
-    public static Array<Box> l2Boxes(){
-        return Array.with(new Box(2,3));
+    public static Map<Tile, Box> l2Boxes(){
+        Box box = new Box(2,3);
+        Map<Tile, Box> boxGrid = new HashMap<>();
+        boxGrid.put(box.getCurrent(), box);
+        return boxGrid;
     }
 
     public static TileEnum[][] l3TileGrid(){
@@ -53,10 +63,14 @@ public class LevelConfig {
         return new Player(3,3);
     }
 
-    public static Array<Box> l3Boxes(){
-        return Array.with(
-            new Box(2,2),
-            new Box(2,3)
-        );
+    public static Map<Tile, Box> l3Boxes(){
+        Box b1  = new Box(2,2);
+        Box b2 = new Box(2,3);
+
+        Map<Tile, Box> boxGrid = new HashMap<>();
+        boxGrid.put(b1.getCurrent(), b1);
+        boxGrid.put(b2.getCurrent(), b2);
+        return boxGrid;
+
     }
 }

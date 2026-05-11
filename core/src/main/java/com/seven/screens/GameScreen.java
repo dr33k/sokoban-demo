@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.seven.SokobanGame;
@@ -15,16 +16,17 @@ import com.seven.entities.Box;
 import com.seven.entities.Player;
 import com.seven.entities.Tile;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class GameScreen implements Screen, InputProcessor {
     private final SokobanGame game;
     private final FitViewport viewport;
     private final Array<Sprite> prototypes;
-    private final TileEnum[][] staticTileGrid;
-    private final Player player;
-    private final Map<Tile, Box> boxGrid;
+    private  TileEnum[][] staticTileGrid;
+    private  Player player;
+    private  Map<Tile, Box> boxGrid;
+    private int currentMoves;
+    private int currentLevelIndex;
 
 
     public GameScreen(SokobanGame game) {
@@ -32,13 +34,7 @@ public class GameScreen implements Screen, InputProcessor {
         viewport = new FitViewport(Constants.W1, Constants.H1);
         staticTileGrid = LevelConfig.l1TileGrid();
         player = LevelConfig.l1Player();
-        Array<Box> boxes = LevelConfig.l1Boxes();
-
-        boxGrid = new HashMap<>();
-        for (Box box :
-            boxes) {
-            boxGrid.put(box.getCurrent(), box);
-        }
+        boxGrid = LevelConfig.l1Boxes();
 
         prototypes = Array.with(
             new Sprite(game.getAssetManager().get(Constants.PLAYER, Texture.class)),
@@ -88,6 +84,30 @@ public class GameScreen implements Screen, InputProcessor {
     public void dispose() {
 
     }
+    public void loadLevel(int currentLevelIndex){
+        currentMoves = 0;
+        switch(currentLevelIndex){
+            case 1: {
+                player = LevelConfig.l1Player();
+                boxGrid = LevelConfig.l1Boxes();
+                staticTileGrid = LevelConfig.l1TileGrid();
+                break;
+            }
+            case 2: {
+                player = LevelConfig.l2Player();
+                boxGrid = LevelConfig.l2Boxes();
+                staticTileGrid = LevelConfig.l2TileGrid();
+                break;
+            }
+            case 3: {
+                player = LevelConfig.l3Player();
+                boxGrid = LevelConfig.l3Boxes();
+                staticTileGrid = LevelConfig.l3TileGrid();
+                break;
+            }
+        }
+
+    }
 
     @Override
     public boolean keyDown(int keycode) {
@@ -95,16 +115,27 @@ public class GameScreen implements Screen, InputProcessor {
         Tile playerTargetTile = player.getTarget();
 
         if(keycode == Input.Keys.UP || keycode == Input.Keys.W){
-            playerTargetTile.setY(playerCurrentTile.getY()+1);
+            playerTargetTile.setY(
+                MathUtils.clamp(playerCurrentTile.getY()+1, 0, staticTileGrid.length-1)
+            );
             return true;
         }else if(keycode == Input.Keys.DOWN || keycode == Input.Keys.S){
-            playerTargetTile.setY(playerCurrentTile.getY()-1);
+            playerTargetTile.setY(
+                MathUtils.clamp(playerCurrentTile.getY()-1, 0, staticTileGrid.length-1)
+            );
             return true;
         }else if(keycode == Input.Keys.LEFT || keycode == Input.Keys.A){
-            playerTargetTile.setX(playerCurrentTile.getX()-1);
+            playerTargetTile.setX(
+                MathUtils.clamp(playerCurrentTile.getX()-1, 0, staticTileGrid[0].length-1)
+            );
             return true;
         }else if(keycode == Input.Keys.RIGHT || keycode == Input.Keys.D){
-            playerTargetTile.setX(playerCurrentTile.getX()+1);
+            playerTargetTile.setX(
+                MathUtils.clamp(playerCurrentTile.getX()+1, 0, staticTileGrid[0].length-1)
+            );
+            return true;
+        }else if(keycode == Input.Keys.R){
+            loadLevel(currentLevelIndex);
             return true;
         }
         return false;
@@ -164,5 +195,13 @@ public class GameScreen implements Screen, InputProcessor {
 
     public Map<Tile, Box> getBoxGrid() {
         return boxGrid;
+    }
+
+    public int getCurrentMoves() {
+        return currentMoves;
+    }
+
+    public void setCurrentMoves(int currentMoves) {
+        this.currentMoves = currentMoves;
     }
 }
