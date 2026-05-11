@@ -21,10 +21,10 @@ public class LevelConfig {
         };
     }
     public static Player l1Player(Texture texture){
-        return new Player(new Sprite(texture), 1,1);
+        return new Player(texture, 1,1);
     }
     public static Map<Tile, Box> l1Boxes(Texture texture){
-        Box box = new Box(new Sprite(texture), 2,1);
+        Box box = new Box(texture, 1,2);
         Map<Tile, Box> boxGrid = new HashMap<>();
         boxGrid.put(box.getCurrent(), box);
         return boxGrid;
@@ -41,11 +41,11 @@ public class LevelConfig {
     }
 
     public static Player l2Player(Texture texture){
-        return new Player(new Sprite(texture), 2,2);
+        return new Player(texture, 2,2);
     }
 
     public static Map<Tile, Box> l2Boxes(Texture texture){
-        Box box = new Box(new Sprite(texture),2,3);
+        Box box = new Box(texture,2,3);
         Map<Tile, Box> boxGrid = new HashMap<>();
         boxGrid.put(box.getCurrent(), box);
         return boxGrid;
@@ -61,12 +61,12 @@ public class LevelConfig {
         };
     }
     public static Player l3Player(Texture texture){
-        return new Player(new Sprite(texture), 3,3);
+        return new Player(texture, 3,3);
     }
 
     public static Map<Tile, Box> l3Boxes(Texture texture){
-        Box b1  = new Box(new Sprite(texture), 2,2);
-        Box b2 = new Box(new Sprite(texture),2,3);
+        Box b1  = new Box(texture, 2,2);
+        Box b2 = new Box(texture,3,2);
 
         Map<Tile, Box> boxGrid = new HashMap<>();
         boxGrid.put(b1.getCurrent(), b1);

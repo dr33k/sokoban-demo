@@ -1,13 +1,13 @@
 package com.seven.entities;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.Texture;
 
 public class Box {
     private Tile current;
-    private Sprite sprite;
+    private Texture texture;
 
-    public Box(Sprite sprite, int currentY, int currentX) {
-        this.sprite = sprite;
+    public Box(Texture texture, int currentY, int currentX) {
+        this.texture = texture;
         this.current = new Tile(currentY, currentX);
     }
     public Tile getCurrent() {
@@ -18,11 +18,11 @@ public class Box {
         this.current = current;
     }
 
-    public Sprite getSprite() {
-        return sprite;
+    public Texture getTexture() {
+        return texture;
     }
 
-    public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }

@@ -15,6 +15,8 @@ import com.seven.config.LevelConfig;
 import com.seven.entities.Box;
 import com.seven.entities.Player;
 import com.seven.entities.Tile;
+import com.seven.systems.MotionSystem;
+import com.seven.systems.RenderSystem;
 
 import java.util.Map;
 
@@ -28,6 +30,9 @@ public class GameScreen implements Screen, InputProcessor {
     private int currentLevelMoves;
     private int currentLevelIndex;
     private boolean isCurrentLevelComplete;
+
+    private final MotionSystem motionSystem;
+    private final RenderSystem renderSystem;
 
 
     public GameScreen(SokobanGame game) {
@@ -49,6 +54,9 @@ public class GameScreen implements Screen, InputProcessor {
         currentLevelMoves = 0;
         currentLevelIndex = 0;
         isCurrentLevelComplete = false;
+
+        motionSystem = new MotionSystem();
+        renderSystem = new RenderSystem(game);
     }
 
     public FitViewport getViewport() {
@@ -62,7 +70,8 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
-
+        motionSystem.update(this, delta);
+        renderSystem.update(this);
     }
 
     @Override

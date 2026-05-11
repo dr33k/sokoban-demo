@@ -1,20 +1,16 @@
 package com.seven.entities;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.seven.config.GridConfig;
+import com.badlogic.gdx.graphics.Texture;
 
 public class Player {
     private Tile current;
     private Tile target;
-    private Sprite sprite;
+    private Texture texture;
 
-    public Player(Sprite sprite, int currentY, int currentX) {
-        this.sprite = sprite;
+    public Player(Texture texture, int currentY, int currentX) {
+        this.texture = texture;
         this.current = new Tile(currentY, currentX);
         this.target = new Tile(currentY, currentX);
-        this.sprite.setPosition(
-            GridConfig.toScreenCoordinates(currentX, currentY)
-        );
     }
 
     public Tile getCurrent() {
@@ -33,11 +29,11 @@ public class Player {
         this.target = target;
     }
 
-    public Sprite getSprite() {
-        return sprite;
+    public Texture getTexture() {
+        return texture;
     }
 
-    public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }
