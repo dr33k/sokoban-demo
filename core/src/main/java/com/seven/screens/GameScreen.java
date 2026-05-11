@@ -27,14 +27,15 @@ public class GameScreen implements Screen, InputProcessor {
     private  Map<Tile, Box> boxGrid;
     private int currentLevelMoves;
     private int currentLevelIndex;
+    private boolean isCurrentLevelComplete;
 
 
     public GameScreen(SokobanGame game) {
         this.game = game;
         viewport = new FitViewport(Constants.W1, Constants.H1);
         staticTileGrid = LevelConfig.l1TileGrid();
-        player = LevelConfig.l1Player();
-        boxGrid = LevelConfig.l1Boxes();
+        player = LevelConfig.l1Player(game.getAssetManager().get(Constants.PLAYER, Texture.class));
+        boxGrid = LevelConfig.l1Boxes(game.getAssetManager().get(Constants.BOX, Texture.class));
 
         prototypes = Array.with(
             new Sprite(game.getAssetManager().get(Constants.PLAYER, Texture.class)),
@@ -44,6 +45,10 @@ public class GameScreen implements Screen, InputProcessor {
             new Sprite(game.getAssetManager().get(Constants.TARGET, Texture.class)),
             new Sprite(game.getAssetManager().get(Constants.SOLVED, Texture.class))
         );
+
+        currentLevelMoves = 0;
+        currentLevelIndex = 0;
+        isCurrentLevelComplete = false;
     }
 
     public FitViewport getViewport() {
@@ -86,22 +91,23 @@ public class GameScreen implements Screen, InputProcessor {
     }
     public void loadLevel(int currentLevelIndex){
         currentLevelMoves = 0;
+        isCurrentLevelComplete = false;
         switch(currentLevelIndex){
             case 1: {
-                player = LevelConfig.l1Player();
-                boxGrid = LevelConfig.l1Boxes();
+                player = LevelConfig.l1Player(game.getAssetManager().get(Constants.PLAYER, Texture.class));
+                boxGrid = LevelConfig.l1Boxes(game.getAssetManager().get(Constants.BOX, Texture.class));
                 staticTileGrid = LevelConfig.l1TileGrid();
                 break;
             }
             case 2: {
-                player = LevelConfig.l2Player();
-                boxGrid = LevelConfig.l2Boxes();
+                player = LevelConfig.l2Player(game.getAssetManager().get(Constants.PLAYER, Texture.class));
+                boxGrid = LevelConfig.l2Boxes(game.getAssetManager().get(Constants.BOX, Texture.class));
                 staticTileGrid = LevelConfig.l2TileGrid();
                 break;
             }
             case 3: {
-                player = LevelConfig.l3Player();
-                boxGrid = LevelConfig.l3Boxes();
+                player = LevelConfig.l3Player(game.getAssetManager().get(Constants.PLAYER, Texture.class));
+                boxGrid = LevelConfig.l3Boxes(game.getAssetManager().get(Constants.BOX, Texture.class));
                 staticTileGrid = LevelConfig.l3TileGrid();
                 break;
             }
@@ -203,5 +209,13 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void setCurrentLevelMoves(int currentLevelMoves) {
         this.currentLevelMoves = currentLevelMoves;
+    }
+
+    public boolean isCurrentLevelComplete() {
+        return isCurrentLevelComplete;
+    }
+
+    public void setCurrentLevelComplete(boolean currentLevelComplete) {
+        isCurrentLevelComplete = currentLevelComplete;
     }
 }
