@@ -25,7 +25,7 @@ public class GameScreen implements Screen, InputProcessor {
     private  TileEnum[][] staticTileGrid;
     private  Player player;
     private  Map<Tile, Box> boxGrid;
-    private int currentMoves;
+    private int currentLevelMoves;
     private int currentLevelIndex;
 
 
@@ -85,7 +85,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     }
     public void loadLevel(int currentLevelIndex){
-        currentMoves = 0;
+        currentLevelMoves = 0;
         switch(currentLevelIndex){
             case 1: {
                 player = LevelConfig.l1Player();
@@ -197,11 +197,11 @@ public class GameScreen implements Screen, InputProcessor {
         return boxGrid;
     }
 
-    public int getCurrentMoves() {
-        return currentMoves;
+    public int getCurrentLevelMoves() {
+        return currentLevelMoves;
     }
 
-    public void setCurrentMoves(int currentMoves) {
-        this.currentMoves = currentMoves;
+    public void setCurrentLevelMoves(int currentLevelMoves) {
+        this.currentLevelMoves = currentLevelMoves;
     }
 }

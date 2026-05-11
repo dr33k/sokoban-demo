@@ -28,6 +28,7 @@ public class MotionSystem {
                 boxAtTarget.getCurrent().setX(boxAtTarget.getCurrent().getX() + moveState.getIncX());
                 boxAtTarget.getCurrent().setY(boxAtTarget.getCurrent().getY() + moveState.getIncY());
             }
+            screen.setCurrentLevelMoves(screen.getCurrentLevelMoves() + 1);
         }
     }
 }
