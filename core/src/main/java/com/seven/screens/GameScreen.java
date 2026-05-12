@@ -1,5 +1,6 @@
 package com.seven.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -15,6 +16,7 @@ import com.seven.config.LevelConfig;
 import com.seven.entities.Box;
 import com.seven.entities.Player;
 import com.seven.entities.Tile;
+import com.seven.systems.LevelSystem;
 import com.seven.systems.MotionSystem;
 import com.seven.systems.RenderSystem;
 
@@ -33,6 +35,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     private final MotionSystem motionSystem;
     private final RenderSystem renderSystem;
+    private final LevelSystem levelSystem;
 
 
     public GameScreen(SokobanGame game) {
@@ -57,6 +60,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         motionSystem = new MotionSystem();
         renderSystem = new RenderSystem(game);
+        levelSystem = new LevelSystem();
     }
 
     public FitViewport getViewport() {
@@ -65,12 +69,13 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
     public void render(float delta) {
         motionSystem.update(this, delta);
+        levelSystem.checkWin(this);
         renderSystem.update(this);
     }
 
