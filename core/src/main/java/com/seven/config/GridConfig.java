@@ -7,10 +7,6 @@ import com.seven.entities.*;
 import java.util.Map;
 
 public class GridConfig {
-    public static Coordinate toScreenCoordinates(int gridX, int gridY){
-        return new Coordinate(gridX * Constants.TILE_SIZE, gridY * Constants.TILE_SIZE);
-    }
-
     public static MoveState testMove(TileEnum[][] staticTileGrid, Map<Tile, Box> boxGrid, Player player){
         Tile current = player.getCurrent();
         Tile target = player.getTarget();
@@ -22,6 +18,9 @@ public class GridConfig {
             return new MoveState(true, destGridTile, incX, incY);
         }
         else if (boxGrid.containsKey(target)) {
+            if(destGridTile == TileEnum.TARGET){ //If box is already solved
+                return new MoveState(false, destGridTile, incX, incY);
+            }
             TileEnum behindBox = null;
             if(incY != 0){
                 behindBox = staticTileGrid[target.getY() + incY][target.getX()];

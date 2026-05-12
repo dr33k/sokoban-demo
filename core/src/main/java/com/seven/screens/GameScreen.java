@@ -4,11 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.seven.SokobanGame;
 import com.seven.assets.Constants;
 import com.seven.assets.TileEnum;
@@ -37,6 +44,12 @@ public class GameScreen implements Screen, InputProcessor {
     private final RenderSystem renderSystem;
     private final LevelSystem levelSystem;
 
+    private Stage uiStage;
+    private Skin skin;
+    private Label currentMovesLabel;
+    private Label instructionsLabel;
+    private Window winWindow;
+
 
     public GameScreen(SokobanGame game) {
         this.game = game;
@@ -61,6 +74,52 @@ public class GameScreen implements Screen, InputProcessor {
         motionSystem = new MotionSystem();
         renderSystem = new RenderSystem(game);
         levelSystem = new LevelSystem();
+
+        initUI();
+    }
+    private void initUI(){
+        uiStage = new Stage(new ScreenViewport());
+        skin = new Skin(Gdx.files.internal("plain-james-ui/plain-james-ui.json"));
+
+
+        Table table = new Table();
+        table.setFillParent(true);
+        table.top().left();
+        uiStage.addActor(table);
+
+
+        currentMovesLabel = new Label("Moves: 0", new Label.LabelStyle(game.getFont(), Color.WHITE));
+        instructionsLabel = new Label("R: Restart\nM: Menu", new Label.LabelStyle(game.getFont(), Color.WHITE));
+        table.add(currentMovesLabel).pad(20).row();
+        table.add(instructionsLabel).pad(20).row();
+
+
+        createWinWindow();
+    }
+
+    private void createWinWindow(){
+        winWindow = new Window("Level Complete", skin);
+        winWindow.setMovable(false);
+
+        TextButton nextButton = new TextButton("Next Level", skin);
+        nextButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                currentLevelIndex++;
+                loadLevel(currentLevelIndex);
+                winWindow.setVisible(false);
+            }
+        });
+
+        winWindow.add(nextButton).pad(20);
+        winWindow.pack();
+        winWindow.setPosition(
+            viewport.getWorldWidth()/2f - winWindow.getWidth()/2f,
+            viewport.getWorldHeight() - (0.4f* viewport.getWorldHeight())
+        );
+
+        winWindow.setVisible(false);
+        uiStage.addActor(winWindow);
     }
 
     public FitViewport getViewport() {
@@ -76,7 +135,13 @@ public class GameScreen implements Screen, InputProcessor {
     public void render(float delta) {
         motionSystem.update(this, delta);
         levelSystem.checkWin(this);
-        renderSystem.update(this);
+
+        if(isCurrentLevelComplete && !winWindow.isVisible()){
+            winWindow.setVisible(true);
+            Gdx.input.setInputProcessor(uiStage);
+        }
+
+        renderSystem.update(this, delta);
     }
 
     @Override
@@ -106,7 +171,8 @@ public class GameScreen implements Screen, InputProcessor {
     public void loadLevel(int currentLevelIndex){
         currentLevelMoves = 0;
         isCurrentLevelComplete = false;
-        switch(currentLevelIndex){
+        int currentLevel = currentLevelIndex+1;
+        switch(currentLevel){
             case 1: {
                 player = LevelConfig.l1Player(game.getAssetManager().get(Constants.PLAYER, Texture.class));
                 boxGrid = LevelConfig.l1Boxes(game.getAssetManager().get(Constants.BOX, Texture.class));
@@ -126,7 +192,7 @@ public class GameScreen implements Screen, InputProcessor {
                 break;
             }
         }
-
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
@@ -231,5 +297,13 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void setCurrentLevelComplete(boolean currentLevelComplete) {
         isCurrentLevelComplete = currentLevelComplete;
+    }
+
+    public Label getCurrentMovesLabel() {
+        return currentMovesLabel;
+    }
+
+    public Stage getUiStage() {
+        return uiStage;
     }
 }

@@ -3,6 +3,9 @@ package com.seven.systems;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.seven.SokobanGame;
@@ -22,12 +25,14 @@ public class RenderSystem {
         this.game = game;
     }
 
-    public void update(GameScreen screen){
+    public void update(GameScreen screen, float delta){
         FitViewport viewport = screen.getViewport();
         SpriteBatch spriteBatch = game.getBatch();
         Map<Tile, Box> boxGrid = screen.getBoxGrid();
         Player player = screen.getPlayer();
         TileEnum[][] staticTileGrid = screen.getStaticTileGrid();
+        Label currentMovesLabel = screen.getCurrentMovesLabel();
+        Stage screenUIStage = screen.getUiStage();
 
         int noOfRows = staticTileGrid.length;
         int noOfColumns = staticTileGrid[0].length;
@@ -56,8 +61,13 @@ public class RenderSystem {
         }
 
         for(Map.Entry<Tile, Box> entry: boxGrid.entrySet()){
+            Texture texture = entry.getValue().getTexture();
+            //Check if solved to render solved texture
+            if(staticTileGrid[entry.getKey().getY()][entry.getKey().getX()] == TileEnum.TARGET){
+                texture = game.getAssetManager().get(Constants.SOLVED, Texture.class);
+            }
             spriteBatch.draw(
-                entry.getValue().getTexture(),
+                texture,
                 gridStartX + (entry.getKey().getX() * tileSizeWithPadding),
                 gridStartY + (entry.getKey().getY() * tileSizeWithPadding),
                 Constants.TILE_SIZE,
@@ -74,5 +84,9 @@ public class RenderSystem {
         );
 
         spriteBatch.end();
+
+        currentMovesLabel.setText("Moves: "+ screen.getCurrentLevelMoves());
+        screenUIStage.act(delta);
+        screenUIStage.draw();
     }
 }
