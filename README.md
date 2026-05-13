@@ -3,12 +3,19 @@
 A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
 
 This prototype simulates the Sokoban Board game and implements player and box movement rules
-A level is complete only when all boxes are positioned on all targets.## Platforms
+
+A level is complete only when all boxes are positioned on all targets.
+
 The objective being to accomplish the aforestated in the least number of moves.
 
+Uses LibGDX Preferences to keep track of highest unlocked level and best scores for each level
+
+Currently has 3 levels.
 ![Screenshot (138).png](assets/Screenshot%20%28138%29.png)
 
 ![Screenshot (139).png](assets/Screenshot%20%28139%29.png)
+
+## Platforms
 
 - `core`: Main module with the application logic shared by all platforms.
 - `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
