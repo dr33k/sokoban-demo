@@ -1,7 +1,6 @@
 package com.seven.config;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.seven.assets.TileEnum;
 import com.seven.entities.Box;
 import com.seven.entities.Player;
@@ -33,9 +32,9 @@ public class LevelConfig {
     public static TileEnum[][] l2TileGrid(){
         return new TileEnum[][]{
             {WALL, WALL, WALL, WALL, WALL, WALL},
-            {WALL, FLOOR, FLOOR, WALL, FLOOR, FLOOR},
             {WALL, FLOOR, FLOOR, FLOOR, FLOOR, WALL},
-            {WALL, FLOOR, TARGET, WALL, FLOOR, FLOOR},
+            {WALL, FLOOR, FLOOR, FLOOR, FLOOR, WALL},
+            {WALL, FLOOR, FLOOR, TARGET, FLOOR, WALL},
             {WALL, WALL, WALL, WALL, WALL, WALL},
         };
     }
@@ -54,19 +53,19 @@ public class LevelConfig {
     public static TileEnum[][] l3TileGrid(){
         return new TileEnum[][]{
             {WALL, WALL, WALL, WALL, WALL, WALL, WALL},
-            {WALL, FLOOR, TARGET, FLOOR, WALL, FLOOR, FLOOR},
-            {WALL, FLOOR, FLOOR, FLOOR, WALL, FLOOR, FLOOR},
-            {WALL, TARGET, FLOOR, FLOOR, FLOOR, WALL, FLOOR},
+            {WALL, FLOOR, FLOOR, TARGET, FLOOR, FLOOR, WALL},
+            {WALL, FLOOR, FLOOR, FLOOR, FLOOR, FLOOR, WALL},
+            {WALL, FLOOR, TARGET, FLOOR, FLOOR, FLOOR, WALL},
             {WALL, WALL, WALL, WALL, WALL, WALL, WALL}
         };
     }
     public static Player l3Player(Texture texture){
-        return new Player(texture, 3,3);
+        return new Player(texture, 3,4);
     }
 
     public static Map<Tile, Box> l3Boxes(Texture texture){
-        Box b1  = new Box(texture, 2,2);
-        Box b2 = new Box(texture,3,2);
+        Box b1  = new Box(texture, 3, 3);
+        Box b2 = new Box(texture,2,3);
 
         Map<Tile, Box> boxGrid = new HashMap<>();
         boxGrid.put(b1.getCurrent(), b1);

@@ -3,6 +3,7 @@ package com.seven.systems;
 import com.seven.assets.TileEnum;
 import com.seven.entities.Box;
 import com.seven.entities.Tile;
+import com.seven.persistence.PersistenceManager;
 import com.seven.screens.GameScreen;
 
 import java.util.Map;
@@ -14,9 +15,15 @@ public class LevelSystem {
         boolean isComplete = true;
 
         for(Tile boxTile: boxGrid.keySet()){
-            if(staticTileGrid[boxTile.getY()][boxTile.getX()] != TileEnum.TARGET){
+            if (staticTileGrid[boxTile.getY()][boxTile.getX()] != TileEnum.TARGET) {
                 isComplete = false;
+                break;
             }
+        }
+        if(isComplete){
+            //Persist
+            PersistenceManager.getInstance().registerLevelWin(screen.getCurrentLevel(), screen.getCurrentLevelMoves());
+            PersistenceManager.getInstance().flush();
         }
         screen.setCurrentLevelComplete(isComplete);
     }

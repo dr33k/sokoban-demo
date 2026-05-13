@@ -16,8 +16,8 @@ import com.seven.SokobanGame;
 
 public class MenuScreen implements Screen {
     private final SokobanGame game;
-    private Stage stage;
-    private Skin skin;
+    private final Stage stage;
+    private final Skin skin;
 
     public MenuScreen(SokobanGame game) {
         this.game = game;
@@ -32,16 +32,24 @@ public class MenuScreen implements Screen {
         Label title = new Label("SOKOBAN", new Label.LabelStyle(game.getFont(), Color.WHITE));
 
 
-        TextButton startButton = new TextButton("START GAME", skin);
+        TextButton startButton = new TextButton("START", skin);
         startButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new GameScreen(game));
             }
         });
+        TextButton quitButton = new TextButton("QUIT", skin);
+        quitButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
 
         table.add(title).padBottom(50).row();
-        table.add(startButton).width(200).height(50);
+        table.add(startButton).pad(20).width(200).height(50);
+        table.add(quitButton).pad(20).width(200).height(50);
 
     }
 
@@ -81,5 +89,9 @@ public class MenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
         skin.dispose();
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

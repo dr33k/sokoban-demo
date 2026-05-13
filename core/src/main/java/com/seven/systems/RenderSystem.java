@@ -32,6 +32,7 @@ public class RenderSystem {
         Player player = screen.getPlayer();
         TileEnum[][] staticTileGrid = screen.getStaticTileGrid();
         Label currentMovesLabel = screen.getCurrentMovesLabel();
+        Label currentLevelBestMovesLabel = screen.getCurrentLevelBestMovesLabel();
         Stage screenUIStage = screen.getUiStage();
 
         int noOfRows = staticTileGrid.length;
@@ -47,13 +48,14 @@ public class RenderSystem {
 
         ScreenUtils.clear(Color.LIGHT_GRAY);
 
+        //Render static tiles
         spriteBatch.begin();
         for (int y = 0; y < noOfRows; y++){
             for(int x = 0; x < noOfColumns; x++){
                 spriteBatch.draw(
                   game.getAssetManager().get(staticTileGrid[y][x].getTextureFilename(), Texture.class),
                   gridStartX + (x * tileSizeWithPadding),
-                    gridStartY + (y * tileSizeWithPadding),
+                    gridStartY + gridHeight - ((y + 1) * tileSizeWithPadding),
                     Constants.TILE_SIZE,
                     Constants.TILE_SIZE
                 );
@@ -69,7 +71,7 @@ public class RenderSystem {
             spriteBatch.draw(
                 texture,
                 gridStartX + (entry.getKey().getX() * tileSizeWithPadding),
-                gridStartY + (entry.getKey().getY() * tileSizeWithPadding),
+                gridStartY + gridHeight - ((entry.getKey().getY() + 1) * tileSizeWithPadding),
                 Constants.TILE_SIZE,
                 Constants.TILE_SIZE
             );
@@ -78,7 +80,7 @@ public class RenderSystem {
         spriteBatch.draw(
             player.getTexture(),
             gridStartX + (player.getCurrent().getX() * tileSizeWithPadding),
-            gridStartY + (player.getCurrent().getY() * tileSizeWithPadding),
+            gridStartY + gridHeight - ((player.getCurrent().getY()+1) * tileSizeWithPadding),
             Constants.TILE_SIZE,
             Constants.TILE_SIZE
         );
@@ -86,6 +88,7 @@ public class RenderSystem {
         spriteBatch.end();
 
         currentMovesLabel.setText("Moves: "+ screen.getCurrentLevelMoves());
+        currentLevelBestMovesLabel.setText("Best: " + (screen.getCurrentLevelBestMoves() == Integer.MAX_VALUE ? "--" : screen.getCurrentLevelBestMoves()));
         screenUIStage.act(delta);
         screenUIStage.draw();
     }

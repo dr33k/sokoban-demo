@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -23,6 +22,7 @@ import com.seven.config.LevelConfig;
 import com.seven.entities.Box;
 import com.seven.entities.Player;
 import com.seven.entities.Tile;
+import com.seven.persistence.PersistenceManager;
 import com.seven.systems.LevelSystem;
 import com.seven.systems.MotionSystem;
 import com.seven.systems.RenderSystem;
@@ -37,7 +37,8 @@ public class GameScreen implements Screen, InputProcessor {
     private  Player player;
     private  Map<Tile, Box> boxGrid;
     private int currentLevelMoves;
-    private int currentLevelIndex;
+    private int currentLevelBestMoves;
+    private int currentLevel;
     private boolean isCurrentLevelComplete;
 
     private final MotionSystem motionSystem;
@@ -47,8 +48,11 @@ public class GameScreen implements Screen, InputProcessor {
     private Stage uiStage;
     private Skin skin;
     private Label currentMovesLabel;
+    private Label currentLevelBestMovesLabel;
     private Label instructionsLabel;
     private Window winWindow;
+
+    private final MenuScreen menuScreen;
 
 
     public GameScreen(SokobanGame game) {
@@ -66,14 +70,14 @@ public class GameScreen implements Screen, InputProcessor {
             new Sprite(game.getAssetManager().get(Constants.TARGET, Texture.class)),
             new Sprite(game.getAssetManager().get(Constants.SOLVED, Texture.class))
         );
+        menuScreen = new MenuScreen(game);
 
-        currentLevelMoves = 0;
-        currentLevelIndex = 0;
-        isCurrentLevelComplete = false;
+        loadLevel(PersistenceManager.getInstance().getHighestUnlocked());
 
         motionSystem = new MotionSystem();
         renderSystem = new RenderSystem(game);
         levelSystem = new LevelSystem();
+
 
         initUI();
     }
@@ -87,10 +91,15 @@ public class GameScreen implements Screen, InputProcessor {
         table.top().left();
         uiStage.addActor(table);
 
-
         currentMovesLabel = new Label("Moves: 0", new Label.LabelStyle(game.getFont(), Color.WHITE));
-        instructionsLabel = new Label("R: Restart\nM: Menu", new Label.LabelStyle(game.getFont(), Color.WHITE));
         table.add(currentMovesLabel).pad(20).row();
+
+        currentLevelBestMovesLabel = new Label(
+            "Best: " + (currentLevelBestMoves == Integer.MAX_VALUE ? "--" : currentLevelBestMoves),
+            new Label.LabelStyle(game.getFont(), Color.WHITE));
+        table.add(currentLevelBestMovesLabel).pad(20).row();
+
+        instructionsLabel = new Label("R: Restart\nM: Menu", new Label.LabelStyle(game.getFont(), Color.WHITE));
         table.add(instructionsLabel).pad(20).row();
 
 
@@ -105,13 +114,22 @@ public class GameScreen implements Screen, InputProcessor {
         nextButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                currentLevelIndex++;
-                loadLevel(currentLevelIndex);
+                currentLevel++;
+                loadLevel(currentLevel);
                 winWindow.setVisible(false);
+            }
+        });
+        TextButton menuButton = new TextButton("Menu", skin);
+        menuButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(menuScreen);
+                Gdx.input.setInputProcessor(menuScreen.getStage());
             }
         });
 
         winWindow.add(nextButton).pad(20);
+        winWindow.add(menuButton).pad(20);
         winWindow.pack();
         winWindow.setPosition(
             viewport.getWorldWidth()/2f - winWindow.getWidth()/2f,
@@ -128,7 +146,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(this);
+        loadLevel(PersistenceManager.getInstance().getHighestUnlocked());
     }
 
     @Override
@@ -168,11 +186,15 @@ public class GameScreen implements Screen, InputProcessor {
     public void dispose() {
 
     }
-    public void loadLevel(int currentLevelIndex){
+    public void loadLevel(int level){
+        level = MathUtils.clamp(level, 0,3);
+
         currentLevelMoves = 0;
+        currentLevel = level;
         isCurrentLevelComplete = false;
-        int currentLevel = currentLevelIndex+1;
-        switch(currentLevel){
+        currentLevelBestMoves = PersistenceManager.getInstance().getBestMoves(level);
+
+        switch(level){
             case 1: {
                 player = LevelConfig.l1Player(game.getAssetManager().get(Constants.PLAYER, Texture.class));
                 boxGrid = LevelConfig.l1Boxes(game.getAssetManager().get(Constants.BOX, Texture.class));
@@ -191,6 +213,11 @@ public class GameScreen implements Screen, InputProcessor {
                 staticTileGrid = LevelConfig.l3TileGrid();
                 break;
             }
+            default:{
+                game.setScreen(menuScreen);
+                Gdx.input.setInputProcessor(menuScreen.getStage());
+                return;
+            }
         }
         Gdx.input.setInputProcessor(this);
     }
@@ -202,12 +229,12 @@ public class GameScreen implements Screen, InputProcessor {
 
         if(keycode == Input.Keys.UP || keycode == Input.Keys.W){
             playerTargetTile.setY(
-                MathUtils.clamp(playerCurrentTile.getY()+1, 0, staticTileGrid.length-1)
+                MathUtils.clamp(playerCurrentTile.getY()-1, 0, staticTileGrid.length-1)
             );
             return true;
         }else if(keycode == Input.Keys.DOWN || keycode == Input.Keys.S){
             playerTargetTile.setY(
-                MathUtils.clamp(playerCurrentTile.getY()-1, 0, staticTileGrid.length-1)
+                MathUtils.clamp(playerCurrentTile.getY()+1, 0, staticTileGrid.length-1)
             );
             return true;
         }else if(keycode == Input.Keys.LEFT || keycode == Input.Keys.A){
@@ -221,7 +248,11 @@ public class GameScreen implements Screen, InputProcessor {
             );
             return true;
         }else if(keycode == Input.Keys.R){
-            loadLevel(currentLevelIndex);
+            loadLevel(currentLevel);
+            return true;
+        }else if(keycode == Input.Keys.M){
+            game.setScreen(menuScreen);
+            Gdx.input.setInputProcessor(menuScreen.getStage());
             return true;
         }
         return false;
@@ -305,5 +336,17 @@ public class GameScreen implements Screen, InputProcessor {
 
     public Stage getUiStage() {
         return uiStage;
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public int getCurrentLevelBestMoves() {
+        return currentLevelBestMoves;
+    }
+
+    public Label getCurrentLevelBestMovesLabel() {
+        return currentLevelBestMovesLabel;
     }
 }

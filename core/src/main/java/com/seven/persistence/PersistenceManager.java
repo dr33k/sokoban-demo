@@ -22,8 +22,11 @@ public class PersistenceManager {
         return instance;
     }
 
-    public void registerLevelWin(int currentLevelIndex, int currentLevelMoves){
-        int currentLevel = currentLevelIndex+1;
+    public int getHighestUnlocked(){return highestUnlocked;}
+    public int getBestMoves(int level){
+        return prefs.getInteger("Level"+level+"BestMoves",Integer.MAX_VALUE);
+    }
+    public void registerLevelWin(int currentLevel, int currentLevelMoves){
         String currentLevelBestMovesKey = "Level" + currentLevel + "BestMoves";
 
         //Update best moves

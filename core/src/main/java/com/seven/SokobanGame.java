@@ -22,7 +22,7 @@ public class SokobanGame extends Game {
         batch = new SpriteBatch();
         assetManager = new AssetManager();
         font = new BitmapFont();
-
+        font.getData().setScale(1.5f);
         assetManager.load(Constants.BOX, Texture.class);
         assetManager.load(Constants.PLAYER, Texture.class);
         assetManager.load(Constants.TARGET, Texture.class);
